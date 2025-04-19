@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Chat Anonymous App</title>
+    <!-- Tailwind CSS từ CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cấu hình Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3490dc',
+                        secondary: '#ffed4a',
+                        danger: '#e3342f'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header th:fragment="header" class="bg-primary text-white shadow-md">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="/" class="text-xl font-bold">Chat Anonymous</a>
+            </div>
+            <div>
+                <ul class="flex space-x-4">
+                    <li><a href="/" class="hover:text-secondary transition-colors" th:classappend="${currentPage == 'home'} ? 'font-bold' : ''">Trang chủ</a></li>
+                    <li><a href="/about" class="hover:text-secondary transition-colors" th:classappend="${currentPage == 'about'} ? 'font-bold' : ''">Giới thiệu</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main th:fragment="main" class="container mx-auto px-4 py-8 min-h-[calc(100vh-160px)]">
+        <div th:replace="${content}">
+            <!-- Nội dung chính sẽ được đặt ở đây -->
+        </div>
+    </main>
+
+    <footer th:fragment="footer" class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Chat Anonymous. Mọi quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <div th:fragment="scripts">
+        <!-- Alpine.js -->
+        <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+        <!-- Custom JavaScript -->
+        <script th:src="@{/js/main.js}"></script>
+    </div>
+</body>
+</html> 

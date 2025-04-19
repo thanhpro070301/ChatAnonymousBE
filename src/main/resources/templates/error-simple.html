@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lỗi - Chat Anonymous</title>
+    <!-- Tailwind CSS từ CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cấu hình Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3490dc',
+                        secondary: '#ffed4a',
+                        danger: '#e3342f'
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full p-5">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden text-center">
+            <div class="p-8">
+                <div class="w-20 h-20 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-exclamation-circle text-danger text-3xl"></i>
+                </div>
+                
+                <h1 class="text-2xl font-bold text-gray-800 mb-3" th:text="${errorMessage ?: 'Đã xảy ra lỗi!'}">
+                    Đã xảy ra lỗi!
+                </h1>
+                
+                <p class="text-gray-600 mb-8" th:text="${errorDetails ?: 'Vui lòng thử lại sau hoặc liên hệ quản trị viên.'}">
+                    Vui lòng thử lại sau hoặc liên hệ quản trị viên.
+                </p>
+                
+                <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+                    <a href="/" class="bg-primary hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-xl transition-colors flex-1 flex items-center justify-center">
+                        <i class="fas fa-home mr-2"></i> Trang chủ
+                    </a>
+                    <button onclick="window.history.back()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-6 rounded-xl transition-colors flex-1 flex items-center justify-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Quay lại
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 p-4 border-t border-gray-200">
+                <p class="text-sm text-gray-500">
+                    Nếu lỗi vẫn tiếp tục, hãy làm mới trang hoặc thử lại sau.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

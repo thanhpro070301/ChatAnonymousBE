@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Anonymous</title>
+    <!-- Tailwind CSS từ CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cấu hình Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3490dc',
+                        secondary: '#ffed4a',
+                        danger: '#e3342f'
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Alpine.js -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center" x-data="{ username: '' }">
+    <div class="w-full max-w-4xl p-5">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-primary mb-2">Chat Anonymous</h1>
+            <p class="text-gray-600 text-lg">Trò chuyện ẩn danh, nhanh chóng và an toàn</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-6 md:p-10">
+                <div class="mb-8 text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+                        <i class="fas fa-comments text-primary text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">Bắt đầu trò chuyện</h2>
+                    <p class="text-gray-600 mt-2">Kết nối với ai đó chỉ trong vài giây</p>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="username" class="block text-gray-700 font-medium mb-2">Tên hiển thị (không bắt buộc)</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        x-model="username" 
+                        placeholder="Ẩn danh" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                        maxlength="20">
+                </div>
+                
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="p-5">
+                            <div class="flex items-center justify-center mb-4 text-primary">
+                                <i class="fas fa-random text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-center mb-2">Ghép cặp ngẫu nhiên</h3>
+                            <p class="text-gray-600 text-sm text-center mb-5">Kết nối với một người trò chuyện ngẫu nhiên từ khắp nơi</p>
+                            <a 
+                                href="/chat/random" 
+                                class="block w-full text-center bg-primary hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-xl transition-colors">
+                                Bắt đầu ngay
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="p-5">
+                            <div class="flex items-center justify-center mb-4 text-primary">
+                                <i class="fas fa-lock text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-center mb-2">Tạo phòng riêng</h3>
+                            <p class="text-gray-600 text-sm text-center mb-5">Tạo phòng chat và mời người khác tham gia</p>
+                            <button 
+                                type="button"
+                                x-on:click="window.location.href = '/chat/create'"
+                                class="block w-full text-center bg-white border-2 border-primary hover:bg-primary/5 text-primary font-medium py-3 px-4 rounded-xl transition-colors">
+                                Tạo phòng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+                <div class="text-sm text-gray-600">
+                    <span th:text="${onlineCount ?: 0}" class="font-bold text-primary">0</span> người đang trực tuyến
+                </div>
+                <a href="/about" class="text-primary hover:underline text-sm">Giới thiệu</a>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center text-gray-500 text-sm">
+            &copy; 2025 Chat Anonymous. Mọi quyền được bảo lưu.
+        </div>
+    </div>
+    
+    <!-- Custom JavaScript -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html> 

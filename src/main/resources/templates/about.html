@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giới thiệu - Chat Anonymous</title>
+    <!-- Tailwind CSS từ CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cấu hình Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3490dc',
+                        secondary: '#ffed4a',
+                        danger: '#e3342f'
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto py-4 px-5 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-primary flex items-center">
+                <i class="fas fa-comments mr-2"></i>
+                Chat Anonymous
+            </a>
+            <a href="/" class="text-primary hover:text-blue-600 transition-colors">
+                <i class="fas fa-arrow-left mr-1"></i> Trang chủ
+            </a>
+        </div>
+    </header>
+    
+    <main class="container mx-auto py-8 px-5">
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                <div class="p-6 md:p-8">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-info-circle text-primary mr-3"></i>
+                        Giới thiệu về Chat Anonymous
+                    </h1>
+                    
+                    <div class="prose max-w-none">
+                        <p class="mb-4">
+                            <strong>Chat Anonymous</strong> là một nền tảng trò chuyện ẩn danh, nơi bạn có thể kết nối với người lạ 
+                            từ khắp nơi mà không cần tiết lộ danh tính. Chúng tôi tin vào sức mạnh của việc giao tiếp tự do và ẩn danh.
+                        </p>
+                        <p>
+                            Đôi khi, việc trò chuyện với người lạ có thể mang lại những cuộc trò chuyện thú vị, 
+                            thoải mái và chân thành nhất.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                <div class="bg-primary text-white py-4 px-6">
+                    <h2 class="text-xl font-medium">Thống kê hiện tại</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 rounded-lg p-5 text-center">
+                            <div class="text-3xl font-bold text-primary mb-1" th:text="${waitingUsers ?: 0}">0</div>
+                            <div class="text-gray-600 text-sm">Người đang chờ</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-5 text-center">
+                            <div class="text-3xl font-bold text-primary mb-1" th:text="${activePairs ?: 0}">0</div>
+                            <div class="text-gray-600 text-sm">Cặp đang trò chuyện</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-5 text-center">
+                            <div class="text-3xl font-bold text-primary mb-1" th:text="${waitingUsers + (activePairs * 2) ?: 0}">0</div>
+                            <div class="text-gray-600 text-sm">Tổng người dùng</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                <div class="bg-primary text-white py-4 px-6">
+                    <h2 class="text-xl font-medium">Nguyên tắc hoạt động</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div class="flex">
+                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-user-secret text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold mb-2">Ẩn danh tuyệt đối</h3>
+                                <p class="text-gray-600 text-sm">Chúng tôi không thu thập thông tin cá nhân. Bạn có thể trò chuyện mà không lo lắng về việc tiết lộ danh tính.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-shield-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold mb-2">Bảo mật</h3>
+                                <p class="text-gray-600 text-sm">Chúng tôi sử dụng các biện pháp bảo mật tiên tiến để đảm bảo các cuộc trò chuyện của bạn được bảo vệ.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-trash-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold mb-2">Không lưu trữ</h3>
+                                <p class="text-gray-600 text-sm">Tin nhắn không được lưu trữ trên máy chủ của chúng tôi. Khi cuộc trò chuyện kết thúc, mọi dữ liệu đều biến mất.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-heart text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold mb-2">Tôn trọng lẫn nhau</h3>
+                                <p class="text-gray-600 text-sm">Chúng tôi khuyến khích người dùng tôn trọng lẫn nhau và tạo ra môi trường trò chuyện an toàn, lành mạnh.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-primary text-white py-4 px-6">
+                    <h2 class="text-xl font-medium">Quy tắc cộng đồng</h2>
+                </div>
+                <div class="p-6">
+                    <p class="mb-4 text-gray-700">Để tạo ra một môi trường trò chuyện an toàn và tích cực, chúng tôi yêu cầu người dùng tuân thủ các quy tắc sau:</p>
+                    
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Tôn trọng người khác, không phân biệt đối xử, quấy rối hoặc bắt nạt.</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Không chia sẻ thông tin cá nhân, hình ảnh hoặc liên kết có hại.</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Không sử dụng ngôn ngữ thù địch, đe dọa hoặc xúc phạm.</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Không quảng cáo hoặc spam.</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span>Báo cáo hành vi không phù hợp.</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-700 border-l-4 border-primary">
+                        <p>Chúng tôi có quyền chặn người dùng vi phạm các quy tắc để duy trì một môi trường an toàn cho tất cả mọi người.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="bg-gray-50 py-6 mt-10">
+        <div class="container mx-auto px-5 text-center text-gray-500 text-sm">
+            &copy; 2025 Chat Anonymous. Mọi quyền được bảo lưu.
+        </div>
+    </footer>
+    
+    <!-- Custom JavaScript -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html> 
+</html> 

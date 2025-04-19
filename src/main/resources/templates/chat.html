@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{fragments/layout :: head('Chat - Chat Anonymous')}"></head>
+<body class="bg-gray-100" x-data="chatApp()">
+    
+    <div class="min-h-screen flex flex-col">
+        <!-- Container chính -->
+        <div class="flex-grow flex items-center justify-center py-6 px-4">
+            <div class="w-full max-w-3xl bg-white rounded-xl shadow-xl overflow-hidden">
+                <!-- Header chat -->
+                <div class="bg-primary text-white p-4 flex justify-between items-center">
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 rounded-full mr-3" :class="connected ? 'bg-green-400' : 'bg-red-400'"></div>
+                        <span class="font-medium text-lg" x-text="peerName || 'Người lạ'">Người lạ</span>
+                        <span class="text-xs ml-3 bg-white/20 py-1 px-2 rounded-full" x-show="!connected">
+                            Đang tìm kiếm...
+                        </span>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button"
+                                class="p-2 rounded-full hover:bg-blue-600 transition-colors"
+                                x-on:click="newChat"
+                                title="Tìm người khác">
+                            <i class="fas fa-random"></i>
+                        </button>
+                        <button type="button"
+                                class="p-2 rounded-full hover:bg-blue-600 transition-colors"
+                                x-on:click="endChat"
+                                title="Kết thúc cuộc trò chuyện">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Khung chat -->
+                <div class="h-[calc(100vh-250px)] p-5 overflow-y-auto bg-gray-50" id="chatMessages" x-ref="messagesContainer">
+                    <!-- Thông báo kết nối -->
+                    <template x-if="!connected && messages.length === 0">
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <div class="w-16 h-16 mb-4 rounded-full bg-gray-200 flex items-center justify-center">
+                                <i class="fas fa-search text-primary text-xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-700 mb-2">Đang tìm kiếm người trò chuyện</h3>
+                            <p class="text-gray-500 max-w-md">Chúng tôi đang kết nối bạn với một người trò chuyện ngẫu nhiên...</p>
+                            <div class="mt-4 flex space-x-1">
+                                <span class="w-2 h-2 bg-primary rounded-full animate-bounce"></span>
+                                <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                                <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Typing indicator -->
+                    <div class="flex items-center text-gray-500 mb-4 px-2 py-1 bg-gray-100 rounded-full w-max" 
+                         x-show="isTyping" x-transition>
+                        <span x-text="peerName || 'Người lạ'" class="text-sm font-medium"></span>
+                        <span class="ml-2 text-sm">đang nhập</span>
+                        <div class="ml-2 inline-flex">
+                            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse mx-0.5"></span>
+                            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse mx-0.5" style="animation-delay: 0.2s"></span>
+                            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse mx-0.5" style="animation-delay: 0.4s"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Tin nhắn -->
+                    <template x-for="(message, index) in messages" :key="index">
+                        <div class="flex flex-col mb-4" :class="message.isMe ? 'items-end' : 'items-start'">
+                            <!-- System message -->
+                            <template x-if="message.isSystem">
+                                <div class="bg-gray-200 text-gray-600 text-sm py-1 px-4 rounded-full mx-auto my-2" x-text="message.text"></div>
+                            </template>
+                            
+                            <!-- User message -->
+                            <template x-if="!message.isSystem">
+                                <div class="max-w-[80%]">
+                                    <div class="rounded-2xl px-4 py-2 shadow-sm" 
+                                         :class="message.isMe ? 'bg-primary text-white rounded-tr-none' : 'bg-white text-gray-700 rounded-tl-none'">
+                                        <p class="whitespace-pre-wrap break-words" x-text="message.text"></p>
+                                    </div>
+                                    <div class="flex items-center mt-1" :class="message.isMe ? 'justify-end' : 'justify-start'">
+                                        <span class="text-xs text-gray-500" x-text="message.time"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+                
+                <!-- Khung nhập tin nhắn -->
+                <div class="border-t border-gray-200 p-4 bg-white">
+                    <form id="chatForm" class="flex items-center" x-on:submit.prevent="sendMessage">
+                        <input type="text" 
+                               id="messageInput" 
+                               x-model="newMessage" 
+                               x-on:keyup="handleTyping"
+                               placeholder="Nhập tin nhắn..." 
+                               class="flex-grow px-4 py-3 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-primary"
+                               :disabled="!connected">
+                        <button type="submit" 
+                                class="bg-primary hover:bg-blue-600 text-white p-3 rounded-r-full transition-colors"
+                                :disabled="!connected">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Footer với nút quay lại -->
+                <div class="bg-gray-50 p-3 text-center border-t border-gray-200">
+                    <a href="/" class="text-primary hover:text-blue-700 text-sm">
+                        <i class="fas fa-arrow-left mr-1"></i> Quay lại trang chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chat app script -->
+    <script th:inline="javascript">
+        function chatApp() {
+            return {
+                messages: [],
+                newMessage: '',
+                connected: false,
+                peerName: null,
+                isTyping: false,
+                typingTimeout: null,
+                socket: null,
+                roomId: /*[[${roomId}]]*/ null,
+                
+                init() {
+                    this.connectWebSocket();
+                    this.addSystemMessage('Đang kết nối với máy chủ...');
+                    
+                    // Scroll to bottom when messages change
+                    this.$watch('messages', () => {
+                        this.$nextTick(() => {
+                            this.scrollToBottom();
+                        });
+                    });
+                },
+                
+                connectWebSocket() {
+                    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    const wsUrl = `${wsProtocol}//${window.location.host}/ws/chat`;
+                    
+                    this.socket = new WebSocket(wsUrl);
+                    
+                    this.socket.onopen = () => {
+                        console.log('WebSocket Connected');
+                        this.addSystemMessage('Đã kết nối với máy chủ, đang tìm kiếm người trò chuyện...');
+                        
+                        // Send join message with room ID if available
+                        if (this.roomId) {
+                            this.socket.send(JSON.stringify({
+                                type: 'JOIN',
+                                roomId: this.roomId
+                            }));
+                            this.addSystemMessage('Đã tạo phòng riêng. Hãy chia sẻ mã phòng: ' + this.roomId);
+                        }
+                    };
+                    
+                    this.socket.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        
+                        switch (data.type) {
+                            case 'CONNECT':
+                                this.connected = true;
+                                this.peerName = data.username || 'Người lạ';
+                                this.addSystemMessage(`Bạn đã được kết nối với ${this.peerName}`);
+                                break;
+                                
+                            case 'DISCONNECT':
+                                this.connected = false;
+                                this.addSystemMessage(`${this.peerName || 'Người lạ'} đã ngắt kết nối`);
+                                this.peerName = null;
+                                break;
+                                
+                            case 'MESSAGE':
+                                this.addMessage(data.text, false);
+                                break;
+                                
+                            case 'TYPING':
+                                this.isTyping = data.isTyping;
+                                break;
+                        }
+                    };
+                    
+                    this.socket.onclose = () => {
+                        console.log('WebSocket Disconnected');
+                        this.connected = false;
+                        this.addSystemMessage('Mất kết nối với máy chủ, đang thử kết nối lại...');
+                        
+                        // Attempt to reconnect after 2 seconds
+                        setTimeout(() => {
+                            this.connectWebSocket();
+                        }, 2000);
+                    };
+                    
+                    this.socket.onerror = (error) => {
+                        console.error('WebSocket Error:', error);
+                        this.addSystemMessage('Lỗi kết nối, vui lòng thử lại sau.');
+                    };
+                },
+                
+                sendMessage() {
+                    if (!this.newMessage.trim() || !this.connected) return;
+                    
+                    this.socket.send(JSON.stringify({
+                        type: 'MESSAGE',
+                        text: this.newMessage
+                    }));
+                    
+                    this.addMessage(this.newMessage, true);
+                    this.newMessage = '';
+                    
+                    // Reset typing indicator
+                    this.sendTypingStatus(false);
+                },
+                
+                handleTyping() {
+                    if (!this.connected) return;
+                    
+                    // Clear previous timeout
+                    if (this.typingTimeout) {
+                        clearTimeout(this.typingTimeout);
+                    }
+                    
+                    // Send typing status
+                    this.sendTypingStatus(true);
+                    
+                    // Set timeout to stop typing indicator after 1.5 seconds of inactivity
+                    this.typingTimeout = setTimeout(() => {
+                        this.sendTypingStatus(false);
+                    }, 1500);
+                },
+                
+                sendTypingStatus(isTyping) {
+                    this.socket.send(JSON.stringify({
+                        type: 'TYPING',
+                        isTyping: isTyping
+                    }));
+                },
+                
+                addMessage(text, isMe) {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                    
+                    this.messages.push({
+                        text: text,
+                        isMe: isMe,
+                        time: timeString
+                    });
+                },
+                
+                addSystemMessage(text) {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                    
+                    this.messages.push({
+                        text: text,
+                        isSystem: true,
+                        time: timeString
+                    });
+                },
+                
+                newChat() {
+                    if (confirm('Bạn có chắc muốn tìm người trò chuyện mới?')) {
+                        this.socket.send(JSON.stringify({
+                            type: 'NEW_CHAT'
+                        }));
+                        
+                        this.connected = false;
+                        this.peerName = null;
+                        this.messages = [];
+                        this.addSystemMessage('Đang tìm người trò chuyện mới...');
+                    }
+                },
+                
+                endChat() {
+                    if (confirm('Bạn có chắc muốn kết thúc cuộc trò chuyện?')) {
+                        this.socket.send(JSON.stringify({
+                            type: 'END_CHAT'
+                        }));
+                        
+                        this.connected = false;
+                        this.peerName = null;
+                        this.addSystemMessage('Cuộc trò chuyện đã kết thúc');
+                    }
+                },
+                
+                scrollToBottom() {
+                    const container = this.$refs.messagesContainer;
+                    container.scrollTop = container.scrollHeight;
+                }
+            };
+        }
+    </script>
+</body>
+</html> 
