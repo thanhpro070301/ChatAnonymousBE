@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: chat-anonymous-app
+    env: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod 
